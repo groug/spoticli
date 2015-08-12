@@ -46,6 +46,7 @@ class SpotifyCLI(object):
         })
 
         #SSL verification is currently set to false because Im currently unable to figure out why its refusing the certificate
+        requests.packages.urllib3.disable_warnings()
         request = requests.get(url, params=params, headers=headers, verify=False)
 
         if isCSRF:
