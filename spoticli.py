@@ -18,10 +18,13 @@ class SpotifyCLI(object):
     oauth_token = None
     csrf_token = None
 
-    def setup(self):
-        self.domain = '{0}.spotilocal.com'.format(
-            ''.join(random.choice(string.ascii_lowercase) for x in range(10))
-        )
+    def setup(self, localhost=True):
+        if localhost:
+            self.domain = '127.0.0.1'
+        else:
+            self.domain = '{0}.spotilocal.com'.format(
+                ''.join(random.choice(string.ascii_lowercase) for x in range(10))
+            )
         #changed url endpoints
         self.oauth_token = self.get('https://embed.spotify.com/remote-control-bridge/')
         self.csrf_token = self.get('/simplecsrf/token.json')['token']
