@@ -1,14 +1,18 @@
+#!/usr/bin/env python
+
 import string
 import random
 import json
 import requests
 import re
 import ssl
-import sys, getopt
+import sys
+import getopt
 
 
 # Default port that Spotify Web Helper binds to.
 PORT = 4371
+
 
 class SpotifyCLI(object):
     oauth_token = None
@@ -25,7 +29,7 @@ class SpotifyCLI(object):
     def get(self, url, params={}, headers={}):
         response = ""
         isCSRF = False
-        
+
         if url.startswith('/'):
             url = "https://%s:%d%s" % (self.domain, PORT, url)
             isCSRF = True
@@ -37,13 +41,13 @@ class SpotifyCLI(object):
         })
         #headers also needed to be changed
         headers.update({
-            'Referer':'https://embed.spotify.com/remote-control-bridge/',
+            'Referer': 'https://embed.spotify.com/remote-control-bridge/',
             'Origin': 'https://embed.spotify.com/'
         })
-        
+
         #SSL verification is currently set to false because Im currently unable to figure out why its refusing the certificate
         request = requests.get(url, params=params, headers=headers, verify=False)
-        
+
         if isCSRF:
             response = request.json()
         else:
@@ -51,9 +55,8 @@ class SpotifyCLI(object):
             search = re.compile('(?<=a = \')(.*)(?=\';)')
             parsed = search.findall(data)
             response = parsed[0]
-            
-        return response  
-        
+
+        return response
 
     def get_status(self):
         return self.get('/remote/status.json')
@@ -70,9 +73,10 @@ class SpotifyCLI(object):
             'context': spotify_uri
         })
 
+
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "", ["play=","pause","unpause","skip_forward","skip_back"])
+        opts, args = getopt.getopt(argv, "", ["play=", "pause", "unpause", "skip_forward", "skip_back"])
     except getopt.GetoptError:
         print "Usage: spoticli.py --play=<uri>|--pause|--unpause|--skip_forward|--skip_back"
         sys.exit(2)
@@ -93,4 +97,3 @@ if __name__ == '__main__':
     spotify = SpotifyCLI()
     spotify.setup()
     main(sys.argv[1:])
-    
