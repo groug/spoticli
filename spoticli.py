@@ -68,6 +68,10 @@ class SpotifyCLI(object):
     def unpause(self):
         return self.pause(pause=False)
 
+    def playpause(self):
+        status = self.get_status()
+        return self.pause(pause=status['playing'])
+
     def play(self, spotify_uri):
         return self.get('/remote/play.json', {
             'uri': spotify_uri,
@@ -77,9 +81,9 @@ class SpotifyCLI(object):
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "", ["play=", "pause", "unpause", "skip_forward", "skip_back"])
+        opts, args = getopt.getopt(argv, "", ["play=", "pause", "unpause", "playpause", "skip_forward", "skip_back"])
     except getopt.GetoptError:
-        print "Usage: spoticli.py --play=<uri>|--pause|--unpause|--skip_forward|--skip_back"
+        print "Usage: spoticli.py --play=<uri>|--pause|--unpause|--playpause|--skip_forward|--skip_back"
         sys.exit(2)
     for opt, arg in opts:
         print opt
@@ -89,6 +93,8 @@ def main(argv):
             spotify.pause()
         elif opt == "--unpause":
             spotify.unpause()
+        elif opt == "--playpause":
+            spotify.playpause()
         elif opt == "--skip_forward":
             print "Haven't implemented yet"
         elif opt == "--skip_back":
